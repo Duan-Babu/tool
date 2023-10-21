@@ -1,0 +1,189 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=0.6">
+    <link rel="icon" href="https://babu.fanmao.pro/img/icon.png">
+    <title>🌈 Babu Tool Box</title>
+    <script type="module" src="https://unpkg.com/@fluentui/web-components"></script>
+    <style>
+
+        html
+        {
+            min-width: auto;
+            max-width: 800px;  
+            margin: 0 auto;  
+        }
+
+        body 
+        {
+            background-color:rgb(249,249,249);
+            color:black;
+            font-family: 'HarmonyOS Sans SC', sans-serif;
+            min-width: auto;
+            max-width: 720px;
+            margin: 40px; 
+        }
+
+        .darkmode-layer, .darkmode-toggle {
+        z-index: 500;
+        }
+
+        .ContentEntrance 
+        {
+            animation: FloatIn 1s cubic-bezier(0,1,0,1);
+        }
+
+        .page-title 
+        {
+            font-weight: bold;
+            font-size: 48px;
+            margin: 4px 0 20px 4px;
+        }
+
+        .page-secondtitle 
+        {
+            position: absolute;
+            width: 100%;
+            min-width: 580px;
+            max-width: 800px;
+            text-align: right;
+            font-size: 16px;
+            margin: -68px 40px 0 -88px;
+        }
+
+        .grid-item 
+        {
+            position: relative;
+            margin: 0 0 0 0;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 160px;
+            background-color: transparent;
+            border: none;
+            max-width: 720px;
+        }
+
+        .grid-item .title 
+        {
+            position: absolute;
+            font-size: 22px;
+            left: 26px;
+            top: 8px;
+            right: 0px;
+            bottom: 0px;
+            text-align: left;
+            font-family: 'HarmonyOS Sans SC', sans-serif;
+        }
+
+        .grid-item .description 
+        {
+            position: absolute;
+            font-size: 16px;
+            left: 26px;
+            top: 42px;
+            right: 172px;
+            bottom: 26px;
+            text-align: left;
+            font-family: 'HarmonyOS Sans SC', sans-serif;
+            white-space: normal;
+            word-wrap: break-word;
+        }
+
+        .grid-item img 
+        {
+            position: absolute;
+            height: 120px;
+            width: 120px;
+            right: 26px;
+            top: 20px;
+        }
+
+
+        @media (prefers-color-scheme: dark) 
+        {
+            body 
+            {
+                background-color: rgb(40,40,40);
+                color: white;
+            }
+        }
+
+        @keyframes FloatIn
+        {
+            0% 
+            {
+                opacity: 0;
+                transform: translateY(500px);
+            }
+            40% 
+            {
+                opacity: 0;
+                transform: translateY(500px);
+            }
+            100% 
+            {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .custom {
+        --card-width: auto;
+        --card-height: auto;
+        padding: 22px;
+        }
+    </style>
+</head>
+<body>
+    <fluent-progress id="Progress" style="display:none"></fluent-progress>
+    <fluent-breadcrumb>
+        <fluent-breadcrumb-item href="#">首页</fluent-breadcrumb-item>
+      </fluent-breadcrumb>
+    <h1 class="page-title">🌈 Babu Tool Box</h1>
+    <p class="page-secondtitle">描述<br>实用的小工具合集</p>
+    <div class="ContentEntrance">
+        <div class="grid-container">
+            <fluent-button class="grid-item" onclick="window.location.href = './AI/index.html'">
+                <img src="https://www.emojiall.com/en/header-svg/%F0%9F%A4%94.svg">
+                <h2 class="title">AI分区</h2>
+                <p class="description">使用人工智能辅助人类进行高效操作</p>
+            </fluent-button>
+            <div style="height: 10px;"></div>
+            <fluent-button class="grid-item" onclick="window.location.href = './Music/index.html'">
+                <img src="https://www.emojiall.com/en/header-svg/%F0%9F%8E%B5.svg">
+                <h2 class="title">音乐分区</h2>
+                <p class="description">调用音乐接口在线获取音乐</p>
+            </fluent-button>
+        <div style="height: 10px;"></div>
+              <fluent-card class="custom">
+                <fluent-switch id='dark-toggle' onclick="SetMode()">
+                    <span slot="checked-message">开启</span>
+                    <span slot="unchecked-message">关闭</span>
+                    <label for="cap-switch">反色模式 </label>
+                </fluent-switch>
+            </fluent-card>
+        </div>
+    </div>
+</body>
+    <script src="https://unpkg.com/@fluentui/web-components@2.5.16/dist/web-components.min.js"></script>
+    <script>
+    if (darkmode.isActivated()) {
+		document.getElementById("dark-toggle").checked = true;
+	}
+	else {
+		document.getElementById("dark-toggle").checked = false;
+	}
+    function SetMode(){
+        var options = {
+        saveInCookies: true, // 是否在cookie保存当前模式 - 默认: true,
+        autoMatchOsTheme: true // 是否自动根据系统适应模式 - 默认: true
+    };
+        const darkmode =  new Darkmode();
+        darkmode.toggle();
+    }
+    </script>
+</html>
