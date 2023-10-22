@@ -1,0 +1,236 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=0.6">
+    <link rel="icon" href="https://babu.fanmao.pro/img/icon.png">
+    <title>🎵QQ音乐 [BTB]</title>
+    <script type="module" src="https://unpkg.com/@fluentui/web-components"></script>
+    <style>
+
+        html
+        {
+            min-width: auto;
+            max-width: 800px;  
+            margin: 0 auto;  
+        }
+
+        body 
+        {
+            background-color:rgb(249,249,249);
+            color:black;
+            font-family: 'HarmonyOS Sans SC', sans-serif;
+            min-width: auto;
+            max-width: 720px;
+            margin: 40px; 
+        }
+
+        .darkmode-layer, .darkmode-toggle {
+        z-index: 500;
+        }
+
+        .ContentEntrance 
+        {
+            animation: FloatIn 1s cubic-bezier(0,1,0,1);
+        }
+
+        .page-title 
+        {
+            font-weight: bold;
+            font-size: 48px;
+            margin: 4px 0 20px 4px;
+        }
+
+        .page-secondtitle 
+        {
+            position: absolute;
+            width: 100%;
+            min-width: 580px;
+            max-width: 800px;
+            text-align: right;
+            font-size: 16px;
+            margin: -68px 40px 0 -88px;
+        }
+
+        .grid-item 
+        {
+            position: relative;
+            margin: 4px 0 0 0;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 68px;
+            background-color: none;
+            border: none;
+            max-width: 720px;
+        }
+
+        .grid-item img
+        {
+            position: absolute;
+            height: 24px;
+            width: 24px;
+            left: 22px;
+            top: 22px;
+            bottom: 24;
+            border-radius: 8px;
+        }
+
+        .grid-item .title 
+        {
+            position: absolute;
+            font-size: 16px;
+            left: 68px;
+            right: 26px;
+            top: 25px;
+            bottom: 27px;
+            text-align: left;
+            font-family: 'HarmonyOS Sans SC', sans-serif;
+        }
+
+        @media (prefers-color-scheme: dark) 
+        {
+            body 
+            {
+                background-color: rgb(40,40,40);
+                color: white;
+            }
+        }
+
+        @keyframes FloatIn
+        {
+            0% 
+            {
+                opacity: 0;
+                transform: translateY(500px);
+            }
+            40% 
+            {
+                opacity: 0;
+                transform: translateY(500px);
+            }
+            100% 
+            {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .custom {
+        --card-width: auto;
+        --card-height: auto;
+        padding: 22px;
+        }
+    </style>
+</head>
+<body>
+    <fluent-progress id="Progress" style="display:none"></fluent-progress>
+    <fluent-breadcrumb>
+        <fluent-breadcrumb-item href="../">首页</fluent-breadcrumb-item>
+        <fluent-breadcrumb-item href="./">🎵音乐分区</fluent-breadcrumb-item>
+        <fluent-breadcrumb-item>🎵QQ音乐</fluent-breadcrumb-item>
+      </fluent-breadcrumb>
+    <h1 class="page-title">QQ音乐</h1>
+    <p class="page-secondtitle">API技术支持<br>落月API</p>
+    <div class="ContentEntrance" id="container">
+        <div class="grid-container">
+            <fluent-text-field appearance="outline" placeholder="请输入您要搜索的歌曲" id="Txb">输入</fluent-text-field>
+            <div style="height: 10px;"></div>
+            <fluent-tooltip id="tooltip" anchor="anchor-default">
+                🔃点击可重新检索
+              </fluent-tooltip>
+            <fluent-button id="anchor-default" aria-describedby="tooltip" appearance="accent" onclick="getListInformation()">🔍搜索</fluent-button>
+
+            <div style="height: 15px;"></div>
+            <fluent-card class="custom">
+                <span style="font-family: Segoe Fluent Icons;">&#xEa42;</span>
+                <div id="List_标题" style="font-size: large;">⚠️没有结果</div><br>
+                <div id="List_提示">请输入关键词后点击“🔍搜索”按钮，将获取搜索列表。</div><div style="height: 10px;"></div>
+                <div id="List_Result" style="display:none">
+                    <fluent-data-grid id="defaultGrid" style="max-height: 30em; overflow-y: auto;">
+                    </fluent-data-grid>
+                </div>
+                <fluent-progress-ring id="List_loading" style="display:none"></fluent-progress-ring>
+              </fluent-card>
+
+              <div style="height: 15px;"></div>
+
+              <fluent-card class="custom">
+                <span style="font-family: Segoe Fluent Icons;">&#xEa69;</span>
+                <div id="Song_标题" style="font-size: large;">🚫等待联动</div><br>
+                <div id="Song_提示">等待搜索列表获取完成后，单击歌曲即可在此卡片处播放。</div><div style="height: 10px;"></div>
+                <div id="Song_Result" style="display:none">
+                
+                </div>
+                <fluent-progress-ring id="Song_loading" style="display:none"></fluent-progress-ring>
+              </fluent-card>
+
+        </div>
+    </div>
+</body>
+<script>
+    // 构建请求头
+    const headersHome = new Headers();
+    headersHome.append('Referer', 'https://api.vkeys.cn');
+
+    // 构建请求配置
+    const requestConfig = {
+    method: 'GET',
+    headers: headersHome
+    };
+    
+
+    function getListInformation() {
+    const url= 'https://api.vkeys.cn/API/QQ_Music?word=' + document.getElementById('Txb').value ;
+    document.getElementById('List_标题').textContent='🤔正在获取';
+    document.getElementById('List_提示').textContent='正在努力获取歌曲列表，请稍后...';
+    document.getElementById("List_loading").style="display:";
+    document.getElementById("Progress").style="display:";
+    document.getElementById("List_Result").style="display:none";
+    fetch(url,requestConfig)
+      .then(response => response.json())
+      .then(data => { 
+        const newRows=[];
+        for (let i = 0; i < data.data.length; i++) {  
+        newRows.push(newDataRow(`${i}`));
+        
+        function newDataRow(id) {
+            return {
+            序号: `${id}`,
+            歌曲: `${data.data[id].song}`,
+            歌手: `${data.data[id].singer}`,
+            专辑: `${data.data[id].album}`,
+            播放: `▶️播放`,
+            };
+        }
+    //listContent.push({
+        //序号:i, 
+        //歌曲:data.data[i].song, 
+        //歌手:data.data[i].singer});  
+    }  
+    
+  // 将表头和数据一起赋值给 defaultGrid 的 rowsData 属性
+  document.getElementById('List_标题').textContent='✅获取成功';   
+  document.getElementById('List_提示').textContent='请在列表中选中任意歌曲，将在下方卡片自动播放。';   
+  document.getElementById('Song_标题').textContent='⭕等待选择';   
+  document.getElementById('Song_提示').textContent='请在列表中选中任意歌曲，将在此卡片自动播放。';   
+  document.getElementById("List_loading").style="display:none";  
+  document.getElementById("Song_loading").style="display:";   
+  document.getElementById("Progress").style="display:none";   
+  document.getElementById("List_Result").style="display:";   
+  document.querySelector('title').textContent = 'QQ音乐 |【' + document.getElementById('Txb').value +'】的搜索结果';   
+  //document.getElementById("defaultGrid").rowsData = [listContent]; // 将表头和数据一起作为 rowsData 提交
+  document.getElementById("defaultGrid").rowsData = newRows; 
+}
+      )
+      .catch(error => {
+        document.getElementById('List_标题').textContent='❌无法获取';
+        document.getElementById('List_提示').textContent='当前无法处理您的请求，请换个关键词后点击“🔍搜索”按钮重试。';
+        document.getElementById("List_loading").style="display:none";
+        document.getElementById("Progress").style="display:none";
+      });
+  }
+    </script>
+</html>
